@@ -44,10 +44,10 @@ class Blockchain():
     def create_block(self, nonce, previous_hash, timestamp):
         
         block = {
-                'index': len(self.chain) + 1,
-                 'timestamp': timestamp,
+                'block_index': len(self.chain),
+                 'block_timestamp': timestamp,
                  'nonce': nonce,
-                 'previous_hash': previous_hash,
+                 'previous_block_hash': previous_hash,
                  'last_trans_timestamp': None,
                  'transactions': []
                  }
@@ -64,5 +64,5 @@ class Blockchain():
         return new_block
     
     def block_to_list(self, block):
-        return [block['index'], block['timestamp'], block['nonce'], block['previous_hash']]
+        return [block['block_index'], block['block_timestamp'], block['nonce'], block['previous_block_hash']]
     

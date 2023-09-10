@@ -42,4 +42,5 @@ def create_blockchain(duration, nodes, daily_readings):
             new_block['last_trans_timestamp'] = timestamp
             
 
-    return df
+    # return df
+    return blockchain

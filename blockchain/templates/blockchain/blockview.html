@@ -15,10 +15,11 @@
     <div class = "row">
       <div class = "row">
         <div class = "col-4">
-          <p>Block Index: {{block_info.block_index}}</p>
-          <p>Block Index: {{block_info.block_timestamp}}</p>
-          <p>Block Index: {{block_info.nonce}}</p>
-          <p>Block Index: {{block_info.previous_block_hash}}</p>
+          <p>Block Index: {{block.block_index}}</p>
+          <p>Block Timestamp: {{block.block_timestamp}}</p>
+          <p>Block Nonce: {{block.nonce}}</p>
+          <p>Previous Block Hash: {{block.previous_block_hash}}</p>
+          <p>Last Transaction added on: {{block.last_trans_timestamp}}</p>
         </div>
         <div class = "col-8">
           <table class = "table table-striped table-bordered">
@@ -31,7 +32,7 @@
               <tr>
                 <th>{{trans.node}}</th>
                 <th>{{trans.temp}}</th>
-                <th>{{trans.trans_timestamp}}</th>
+                <th>{{trans.timestamp}}</th>
               </tr>
             {% endfor %}
           </table>

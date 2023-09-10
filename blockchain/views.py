@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 import datetime
+import time
 import hashlib
 import json
 import pandas as pd
@@ -15,11 +16,12 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from .create_blockchain import create_blockchain
+from .blockchain import Blockchain
 from .models import BlockchainTransactions
 
-DURATION = 5
+DURATION = 100
 NODES = 3
-DAILY_READINGS = 2
+DAILY_READINGS = 24
 
 class MainView(View):
     
@@ -32,25 +34,28 @@ class MainView(View):
     def post(self, request, *args, **kwargs):
         
         BlockchainTransactions.objects.all().delete()
-        
-        df = create_blockchain(DURATION, NODES, DAILY_READINGS)
-        print(df.head())
-
-        # instances = df.apply(lambda row: BlockchainTransactions(**row.to_dict()), axis=1)
-        instances = list(df.apply(lambda row: BlockchainTransactions(**row.to_dict()), axis=1))
-        # print(instances)
+        start = time.time()
+        # df = create_blockchain(DURATION, NODES, DAILY_READINGS)
+        # print(df.head())
+        blocks = create_blockchain(DURATION, NODES, DAILY_READINGS)
+        instances = []
+        for block in blocks.chain[1:]:
+            block['transactions'] = json.dumps(block['transactions'])
+            instances.append(BlockchainTransactions(**block))
+            
         BlockchainTransactions.objects.bulk_create(instances)
-        
+        print(time.time() - start)
         return redirect('homepage')
 
 
 def block_view(request, id):
     
-    transactions = BlockchainTransactions.objects.filter(block_index=id)
-    first = list(transactions.values('block_index', 'block_timestamp', 'nonce', 'previous_block_hash'))[0]
-    print(first)
+    block = BlockchainTransactions.objects.filter(block_index=id)
+    transactions = json.loads(block[0].transactions)
+    block = list(block.values("block_index", "block_timestamp", "nonce", "previous_block_hash", "last_trans_timestamp"))[0]
     context = {
-        'block_info': first,
+        'block': block,
         'transactions': transactions
+
     }  
     return render(request, 'blockchain/blockview.html', context=context)
